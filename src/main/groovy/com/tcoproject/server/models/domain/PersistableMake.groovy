@@ -14,8 +14,13 @@ class PersistableMake {
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
     String id
 
+    boolean active
+
     String country
+
     boolean isCommon
+
     String name
+
 
 }

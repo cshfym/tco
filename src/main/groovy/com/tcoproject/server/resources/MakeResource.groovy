@@ -1,7 +1,7 @@
 package com.tcoproject.server.resources
 
 import com.tcoproject.server.models.BasicResponse
-import com.tcoproject.server.models.Make
+import com.tcoproject.server.models.external.ExternalMake
 import com.tcoproject.server.services.MakeService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,7 +23,7 @@ class MakeResource {
 
     @ResponseBody
     @RequestMapping(method=RequestMethod.POST, consumes="application/json")
-    BasicResponse postMakeRequest(@RequestBody List<Make> request) {
+    BasicResponse postMakeRequest(@RequestBody List<ExternalMake> request) {
         makeService.saveMakeRequest(request)
         new BasicResponse(success: true)
     }
