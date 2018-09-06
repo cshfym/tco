@@ -1,6 +1,7 @@
-package com.tcoproject.server.services
+package com.tcoproject.server.services.make
 
 import com.tcoproject.server.converters.MakeConverter
+import com.tcoproject.server.models.domain.PersistableMake
 import com.tcoproject.server.models.external.ExternalMake
 
 import com.tcoproject.server.repository.MakeRepository
@@ -28,4 +29,7 @@ class MakeService {
         makeRepository.findByName(make.make_display)
     }
 
+    List<PersistableMake> getAllMakes() {
+        makeRepository.findAll()
+    }
 }

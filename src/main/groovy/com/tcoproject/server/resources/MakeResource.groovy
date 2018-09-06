@@ -2,7 +2,7 @@ package com.tcoproject.server.resources
 
 import com.tcoproject.server.models.BasicResponse
 import com.tcoproject.server.models.external.ExternalMake
-import com.tcoproject.server.services.MakeService
+import com.tcoproject.server.services.make.MakeService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
