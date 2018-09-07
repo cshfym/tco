@@ -7,4 +7,5 @@ interface MakeRepository extends CrudRepository<PersistableMake, String> {
 
     PersistableMake findByName(String name)
 
+    List<PersistableMake> findAllByIsCommon(boolean isCommon)
 }

@@ -1,6 +1,5 @@
 package com.tcoproject.server.services.model
 
-import com.google.common.base.Utf8
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -32,38 +31,46 @@ class ModelService {
     @Autowired
     ModelRepository modelRepository
 
+    @Autowired
+    HTTPConnectionService connectionService
+
     @Value('${carqueryapi.v3.base.url}')
     String CARQUERYAPI_V3_BASE_URL
     String CARQUERYAPI_MODELS_PATH = "&cmd=getModels"
 
-    static final String CARQUERY_ACCEPT_HEADER = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"
-    static final String CARQUERY_CACHE_CONTROL_HEADER = "max-age=0"
-    static final String CARQUERY_USER_AGENT_HEADER = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36"
+    static final String CARQUERY_ACCEPT_HEADER_VALUE = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"
+    static final String CARQUERY_CACHE_CONTROL_HEADER_VALUE = "max-age=0"
+    static final String CARQUERY_USER_AGENT_HEADER_VALUE = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36"
+    static final String X_FORWARDED_FOR_HEADER = "X-Forwarded-For"
 
     // Override request headers for carqueryapi
     static final Map<String,String> requestHeaders = [
-            "Accept": CARQUERY_ACCEPT_HEADER,
-            "cache-control": CARQUERY_CACHE_CONTROL_HEADER,
-            "user-agent": CARQUERY_USER_AGENT_HEADER
+            "Accept": CARQUERY_ACCEPT_HEADER_VALUE,
+            "cache-control": CARQUERY_CACHE_CONTROL_HEADER_VALUE,
+            "user-agent": CARQUERY_USER_AGENT_HEADER_VALUE
     ]
-
 
     Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .setLenient()
             .create()
 
-    @Autowired
-    HTTPConnectionService connectionService
+    Random randomizer = new Random()
+    static final int MAX_IP_ADDRESS_NODE = 255
 
     /**
      * Fetch all models available from the Car Query API and persist.
      */
-    void fetchAndPersistModelsAllMakesAllYears() {
+    void fetchAndPersistModelsAllCommonMakesAllYears(int startWithYear) {
 
-        // Iterating all years and makes
-        (AvailableYears.MINIMUM_YEAR..AvailableYears.MAXIMUM_YEAR).each { int year ->
-            makeService.allMakes.each { PersistableMake make ->
+        List<PersistableMake> commonMakes = makeService.getAllCommonMakes()
+
+        // Iterating all years and common makes
+        (AvailableYears.MAXIMUM_YEAR..AvailableYears.MINIMUM_YEAR).each { int year ->
+
+            if (year > startWithYear) { return }
+
+            commonMakes.each { PersistableMake make ->
                 doFetchAndPersistForMakeAndYear(make, year)
             }
         }
@@ -75,6 +82,9 @@ class ModelService {
 
         String encodedMakeName = URLEncoder.encode(make.name, "UTF-8")
         String makeAndYearUri = CARQUERYAPI_V3_BASE_URL + CARQUERYAPI_MODELS_PATH + "&make=${encodedMakeName}&year=${year}"
+
+        // Override X-Forwarded-For header to randomize IP address
+        requestHeaders.put(X_FORWARDED_FOR_HEADER as String, randomizedIpAddress as String)
 
         // Call API
         String modelResponseJson = connectionService.getData(makeAndYearUri, RequestMethod.GET, null, requestHeaders)
@@ -97,12 +107,11 @@ class ModelService {
             persistModels(models.collect { ModelConverter.toPersistable(it, make, year) })
         } catch (Exception ex) {
             log.error "Exception thrown while persisting model collection", ex
-            throw ex
         }
 
         log.info "Fetched and persisted [${models.size()}] models for [${make.name}], [${year}] in [${System.currentTimeMillis() - startStopwatch}] ms"
 
-        Thread.sleep(2000)
+        Thread.sleep(1000)
     }
 
     // TODO: Transactional per model, not the entire batch.
@@ -134,4 +143,17 @@ class ModelService {
             throw ex
         }
     }
+
+    private String getRandomizedIpAddress() {
+        new StringBuilder()
+            .append(randomizer.nextInt(MAX_IP_ADDRESS_NODE + 1))
+            .append(".")
+            .append(randomizer.nextInt(MAX_IP_ADDRESS_NODE + 1))
+            .append(".")
+            .append(randomizer.nextInt(MAX_IP_ADDRESS_NODE + 1))
+            .append(".")
+            .append(randomizer.nextInt(MAX_IP_ADDRESS_NODE + 1))
+            .toString()
+    }
+
 }

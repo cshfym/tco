@@ -21,7 +21,6 @@ class MakeService {
             if (!makeExists(make)) {
                 makeRepository.save(MakeConverter.toPersistable(make))
             }
-
         }
     }
 
@@ -31,5 +30,9 @@ class MakeService {
 
     List<PersistableMake> getAllMakes() {
         makeRepository.findAll()
+    }
+
+    List<PersistableMake> getAllCommonMakes() {
+        makeRepository.findAllByIsCommon(true)
     }
 }

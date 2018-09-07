@@ -19,7 +19,9 @@ class MasterScheduleService {
 
         log.info "Starting scheduledModelFetchCron at [${new DateTime()}]"
 
-        modelService.fetchAndPersistModelsAllMakesAllYears()
+        int startWithYear = 2001 // Counting down
+
+        modelService.fetchAndPersistModelsAllCommonMakesAllYears(startWithYear)
 
         log.info "Finished scheduledModelFetchCron at [${new DateTime()}]"
     }
