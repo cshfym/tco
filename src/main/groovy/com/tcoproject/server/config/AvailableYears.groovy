@@ -6,6 +6,6 @@ import java.text.SimpleDateFormat
 class AvailableYears {
 
     static final int MINIMUM_YEAR = 1936
-    static final int MAXIMUM_YEAR = Integer.parseInt(new SimpleDateFormat("yyyy").format(Calendar.instance.time))
+    static final int MAXIMUM_YEAR = Integer.parseInt(new SimpleDateFormat("yyyy").format(Calendar.instance.time)) + 1
 
 }
