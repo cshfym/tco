@@ -15,6 +15,9 @@ import javax.jms.ConnectionFactory
 @Configuration
 class JmsConfiguration {
 
+    @Value('${model.load.queue.concurrency}')
+    String MODEL_FETCH_AND_PERSIST_CONCURRENCY
+
     /*
     @Value('${simulation.consumer.queue.concurrency}')
     String SIMULATION_CONSUMER_QUEUE_CONCURRENCY
@@ -41,24 +44,15 @@ class JmsConfiguration {
     String SECTOR_QUOTE_BACKFILL_CONSUMER_QUEUE_CONCURRENCY
     */
 
-    /**
-     * Bean corresponds to the "simulationFactory" JMS listener for consuming simulation requests.
-     * @param connectionFactory
-     * @param configurer
-     * @return {@JmsListenerContainerFactory}
-     */
-    /*
     @Bean
-    JmsListenerContainerFactory<?> simulationFactory(ConnectionFactory connectionFactory, DefaultJmsListenerContainerFactoryConfigurer configurer) {
+    JmsListenerContainerFactory<?> modelFetchAndPersistFactory(ConnectionFactory connectionFactory, DefaultJmsListenerContainerFactoryConfigurer configurer) {
 
         def factory = new DefaultJmsListenerContainerFactory()
-        factory.setConcurrency(SIMULATION_CONSUMER_QUEUE_CONCURRENCY)
+        factory.setConcurrency(MODEL_FETCH_AND_PERSIST_CONCURRENCY)
         configurer.configure(factory, connectionFactory)
         factory
     }
 
-    */
-    
     @Bean // Serialize message content to json using TextMessage
     static MessageConverter jacksonJmsMessageConverter() {
         def converter = new MappingJackson2MessageConverter()

@@ -9,6 +9,7 @@ import com.tcoproject.server.converters.ModelConverter
 import com.tcoproject.server.models.domain.PersistableMake
 import com.tcoproject.server.models.domain.PersistableModel
 import com.tcoproject.server.models.external.CarQueryModelResponse
+import com.tcoproject.server.models.external.ModelFetchAndPersistRequest
 import com.tcoproject.server.repository.ModelRepository
 import com.tcoproject.server.services.common.HTTPConnectionService
 import com.tcoproject.server.services.make.MakeService
@@ -58,9 +59,22 @@ class ModelService {
     Random randomizer = new Random()
     static final int MAX_IP_ADDRESS_NODE = 255
 
+
+    void doModelFetchAndPersist(ModelFetchAndPersistRequest request) {
+
+        if (request.endWithYear < 1950) { request.endWithYear = 1950 }
+
+        PersistableMake make = makeService.getMakeByName(request.make)
+
+        // Iterating through start and stop with year arguments
+        (request.startWithYear..request.endWithYear).each { int year ->
+            doFetchAndPersistForMakeAndYear(make, year)
+        }
+    }
+
     /**
      * Fetch all models available from the Car Query API and persist.
-     */
+
     void fetchAndPersistModelsAllCommonMakesAllYears(int startWithYear) {
 
         List<PersistableMake> commonMakes = makeService.getAllCommonMakes()
@@ -75,6 +89,7 @@ class ModelService {
             }
         }
     }
+    */
 
     void doFetchAndPersistForMakeAndYear(PersistableMake make, int year) {
 

@@ -24,6 +24,10 @@ class MakeService {
         }
     }
 
+    PersistableMake getMakeByName(String name) {
+        makeRepository.findByName(name)
+    }
+
     boolean makeExists(ExternalMake make) {
         makeRepository.findByName(make.make_display)
     }

@@ -14,7 +14,7 @@ class MasterScheduleService {
     @Autowired
     ModelService modelService
 
-    @Scheduled(fixedDelay = 43200000L, initialDelay = 1000L) // Every 12 hours.
+    @Scheduled(fixedDelay = 43200000L, initialDelay = 43200000L) // Every 12 hours.
     void scheduledModelFetchCron() {
 
         log.info "Starting scheduledModelFetchCron at [${new DateTime()}]"
