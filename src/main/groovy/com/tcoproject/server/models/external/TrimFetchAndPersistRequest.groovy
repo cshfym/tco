@@ -1,9 +1,9 @@
 package com.tcoproject.server.models.external
 
 /**
- * External request to fetch and persist all models for a given make.
+ * External request to fetch and persist all trims for a given model .
  */
-class ModelFetchAndPersistRequest {
+class TrimFetchAndPersistRequest {
 
     Integer startWithYear
     Integer endWithYear

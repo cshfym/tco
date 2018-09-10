@@ -1,21 +1,23 @@
 package com.tcoproject.server.converters
 
-import com.tcoproject.server.models.domain.PersistableMake
-import com.tcoproject.server.models.domain.PersistableModel
-import com.tcoproject.server.models.external.CarQueryModelResponse
+import com.tcoproject.server.models.domain.PersistableTrim
+import com.tcoproject.server.models.external.CarQueryTrimResponse
 
 @Singleton
-class ModelConverter {
+class TrimConverter {
 
-    static PersistableModel toPersistable(CarQueryModelResponse model, PersistableMake persistableMake, int inputYear) {
-        PersistableModel persistableModel = new PersistableModel()
-        persistableModel.with {
+    static PersistableTrim toPersistable(CarQueryTrimResponse trimResponse, int inputYear) {
+        PersistableTrim persistableTrim = new PersistableTrim()
+        persistableTrim.with {
+            /*
             make = persistableMake
             year = inputYear
             name = model.modelName
             active = true
+            */
         }
-        persistableModel
+
+        persistableTrim
     }
 
 }

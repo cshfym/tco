@@ -15,8 +15,11 @@ import javax.jms.ConnectionFactory
 @Configuration
 class JmsConfiguration {
 
-    @Value('${model.load.queue.concurrency}')
+    @Value('${model.fetch.persist.queue.concurrency}')
     String MODEL_FETCH_AND_PERSIST_CONCURRENCY
+
+    @Value('${trim.fetch.persist.queue.concurrency}')
+    String TRIM_FETCH_AND_PERSIST_CONCURRENCY
 
     /*
     @Value('${simulation.consumer.queue.concurrency}')
@@ -49,6 +52,15 @@ class JmsConfiguration {
 
         def factory = new DefaultJmsListenerContainerFactory()
         factory.setConcurrency(MODEL_FETCH_AND_PERSIST_CONCURRENCY)
+        configurer.configure(factory, connectionFactory)
+        factory
+    }
+
+    @Bean
+    JmsListenerContainerFactory<?> trimFetchAndPersistFactory(ConnectionFactory connectionFactory, DefaultJmsListenerContainerFactoryConfigurer configurer) {
+
+        def factory = new DefaultJmsListenerContainerFactory()
+        factory.setConcurrency(TRIM_FETCH_AND_PERSIST_CONCURRENCY)
         configurer.configure(factory, connectionFactory)
         factory
     }

@@ -19,7 +19,7 @@ class ModelResource {
 
     @ResponseBody
     @RequestMapping(path="/fetchAndPersist", method=RequestMethod.POST, consumes="application/json")
-    BasicResponse loadModelRequest(@RequestBody ModelFetchAndPersistRequest request) {
+    BasicResponse fetchAndPersistModel(@RequestBody ModelFetchAndPersistRequest request) {
         modelFetchAndPersistQueueSender.queueRequest(request)
         new BasicResponse(success: true)
     }
