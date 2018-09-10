@@ -72,17 +72,14 @@ class ModelService {
         }
     }
 
-    /**
-     * Fetch all models available from the Car Query API and persist.
-
-    void fetchAndPersistModelsAllCommonMakesAllYears(int startWithYear) {
-
+    /*
+    void fetchAndPersistModelsAllCommonMakesAllYears(Integer startWithYear, Integer stopWithYear) {
         List<PersistableMake> commonMakes = makeService.getAllCommonMakes()
 
         // Iterating all years and common makes
         (AvailableYears.MAXIMUM_YEAR..AvailableYears.MINIMUM_YEAR).each { int year ->
 
-            if (year > startWithYear) { return }
+            if (year > startWithYear || year < stopWithYear) { return }
 
             commonMakes.each { PersistableMake make ->
                 doFetchAndPersistForMakeAndYear(make, year)
