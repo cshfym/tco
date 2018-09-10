@@ -118,10 +118,10 @@ class TrimService extends CarQueryApiService {
         PersistableTrim existingTrim = trimRepository.findByModelAndName(persistableTrim.model, persistableTrim.name)
 
         if (!existingTrim) {
-            log.info "Persisting trim for model [${persistableTrim.model.name}], and trim [${persistableTrim.name}]"
+            log.info "Persisting trim for model [${persistableTrim.model.name}], year [${persistableTrim.model.year}] and trim [${persistableTrim.name}]"
             trimRepository.save(persistableTrim)
         } else {
-            log.info "Bypassing persistence for trim - model [${persistableTrim.model.name}], and trim [${persistableTrim.name}] - already exists!"
+            log.info "Bypassing persistence for trim - model [${persistableTrim.model.name}], year [${persistableTrim.model.year}] and trim [${persistableTrim.name}] - already exists!"
         }
 
     }
