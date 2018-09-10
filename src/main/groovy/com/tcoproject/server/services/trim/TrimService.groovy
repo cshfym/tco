@@ -3,11 +3,14 @@ package com.tcoproject.server.services.trim
 import com.google.gson.reflect.TypeToken
 import com.tcoproject.server.converters.TrimConverter
 import com.tcoproject.server.models.domain.PersistableMake
+import com.tcoproject.server.models.domain.PersistableModel
 import com.tcoproject.server.models.domain.PersistableTrim
 import com.tcoproject.server.models.external.CarQueryTrimResponse
 import com.tcoproject.server.models.external.TrimFetchAndPersistRequest
+import com.tcoproject.server.repository.TrimRepository
 import com.tcoproject.server.services.common.CarQueryApiService
 import com.tcoproject.server.services.make.MakeService
+import com.tcoproject.server.services.model.ModelService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -22,10 +25,18 @@ import java.lang.reflect.Type
 class TrimService extends CarQueryApiService {
 
     @Autowired
+    TrimRepository trimRepository
+
+    @Autowired
     MakeService makeService
+
+    @Autowired
+    ModelService modelService
 
     @Value('${carqueryapi.trims.path}')
     String CARQUERYAPI_TRIMS_PATH
+
+    final String X_FORWARDED_FOR_HEADER = "X-Forwarded-For"
 
     final static String FULL_RESULTS = "&full_results=1" // 0 = Partial Results, 1 = Full Results
 
@@ -70,13 +81,21 @@ class TrimService extends CarQueryApiService {
         List<CarQueryTrimResponse> trims = parseTrimResponseJson(trimResponseJson)
 
         // Save all
-        try {
-            persistTrims(trims.collect { TrimConverter.toPersistable(it, year) })
-        } catch (Exception ex) {
-            log.error "Exception thrown while persisting model collection", ex
+        trims.each { CarQueryTrimResponse trimResponse ->
+            PersistableModel model = modelService.findByMakeAndNameAndYear(make, trimResponse.modelName, year)
+            if (!model) {
+                log.error "Could not find model by make [${make.name}], trimResponse.modelName [${trimResponse.modelName}], and year [${year}]!"
+                return // Next response
+            }
+            try {
+                persistTrim(TrimConverter.toPersistable(trimResponse, model))
+            } catch (Exception ex) {
+                log.error "Exception thrown while persisting trim", ex
+            }
+
         }
 
-        log.info "Fetched and persisted [${trims.size()}] trims for [${make.name}] Models, [${year}] in [${System.currentTimeMillis() - startStopwatch}] ms"
+        log.info "Fetched and persisted [${trims.size()}] trims for [${make.name}], year [${year}] in [${System.currentTimeMillis() - startStopwatch}] ms"
 
         Thread.sleep(1000)
     }
@@ -93,23 +112,18 @@ class TrimService extends CarQueryApiService {
         }
     }
 
-    // TODO: Transactional per model, not the entire batch.
     @Transactional
-    void persistTrims(List<PersistableTrim> persistableTrimList) {
+    void persistTrim(PersistableTrim persistableTrim) {
 
-        persistableTrimList.each { PersistableTrim model ->
-/*
-            PersistableTrim existingTrim = trimRepository.findByMakeAndNameAndYear(model.make, model.name, model.year)
+        PersistableTrim existingTrim = trimRepository.findByModelAndName(persistableTrim.model, persistableTrim.name)
 
-            if (!existingTrim) {
-                log.info "Persisting model with make [${model.make.name}], model [${model.name}], and year [${model.year}]"
-                modelRepository.save(model)
-            } else {
-                log.info "Bypassing persistence for make [${model.make.name}], model [${model.name}], year [${model.year}] - already exists."
-            }
+        if (!existingTrim) {
+            log.info "Persisting trim for model [${persistableTrim.model.name}], and trim [${persistableTrim.name}]"
+            trimRepository.save(persistableTrim)
+        } else {
+            log.info "Bypassing persistence for trim - model [${persistableTrim.model.name}], and trim [${persistableTrim.name}] - already exists!"
         }
-*/
-        }
+
     }
 
 }

@@ -31,6 +31,8 @@ class ModelService extends CarQueryApiService {
     @Value('${carqueryapi.models.path}')
     String CARQUERYAPI_MODELS_PATH
 
+    final String X_FORWARDED_FOR_HEADER = "X-Forwarded-For"
+
     void doModelFetchAndPersist(ModelFetchAndPersistRequest request) {
 
         if (request.endWithYear < 1950) { request.endWithYear = 1950 }
@@ -125,5 +127,9 @@ class ModelService extends CarQueryApiService {
             log.error "Payload in error: [${response}]"
             throw ex
         }
+    }
+
+    PersistableModel findByMakeAndNameAndYear(PersistableMake make, String name, int year) {
+        modelRepository.findByMakeAndNameAndYear(make, name, year)
     }
 }

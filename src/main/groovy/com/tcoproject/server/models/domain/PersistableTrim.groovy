@@ -16,41 +16,44 @@ class PersistableTrim {
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
     String id
 
-    boolean active
+    Boolean active
 
     @ManyToOne
     @JoinColumn(name="model_id")
     PersistableModel model
 
+
     String body
-    int co2
+    String co2
     String drive
-    int doors
-    int engineBoreMm
-    int engineCc
+    Integer doors
+    Double engineBoreMm
+    Integer engineCc
     String engineCompression
-    int engineCylinders
+    Integer engineCylinders
     String engineFuel
     String enginePosition
-    int enginePowerPs
-    int enginePowerRpm
-    int engineTorqueNm
-    int engineTorqueRpm
+    Integer enginePowerPs
+    Integer enginePowerRpm
+    Integer engineTorqueNm
+    Integer engineTorqueRpm
     String engineType
-    int engineValvesPerCylinder
-    int engineStrokeMm
+    Integer engineValvesPerCylinder
+    Double engineStrokeMm
     String fuelCap
-    int oneKmHwy
-    int oneKmMixed
-    int oneKmCity
-    int seats
-    boolean soldInUs
-    int topSpeedKph
+    String name // Model trim
+    Double oneKmHwy
+    Double oneKmMixed
+    Double oneKmCity
+    Double zeroToHundredKph
+    Integer seats
+    Boolean soldInUs
+    Integer topSpeedKph
     String transmissionType
-    int weightKg
-    int lengthMm
-    int widthMm
-    int heightMm
-    int wheelbaseMm
+    Double weightKg
+    Double lengthMm
+    Double widthMm
+    Double heightMm
+    Double wheelbaseMm
 
 }
