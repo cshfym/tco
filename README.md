@@ -1,16 +1,35 @@
-Fetch model list:
-  1.Cron wakes up
-  2. Iterates list of available makes (noting manufacturer)
-    2a. Iterates available years
-      2a1. Calls https://www.carqueryapi.com/api/0.3/?callback=?&cmd=getModels&make=<MAKE_NAME>&year=<YEAR>
-      2a2. Persists model with FK on make
+# Raw listing - Make, Model, Trim
+select 
+  mk.name as make,
+  m.name as model, m.year,
+  t.name as trim, t.body
+from trim t
+join model m on t.model_id = m.id
+join make mk on m.make_id = mk.id
+order by m.year, mk.name, m.name, t.name
+limit 10000
+;
 
-Fetch trim list by model and year:
-  1. Cron wakes up
-  2. Iterates list of available models
-   2a. Iterates available years
-     2a1. Calls https://www.carqueryapi.com/api/0.3/?callback=?&cmd=getTrims&year=<YEAR>&model=<MODEL_NAME>
-     2a2. Persists trim with FK on model
+# Count of Trim by Make, Model
+select 
+  mk.name as make,
+  m.name as model, m.year,
+  count(distinct(t.id)) as trim_count
+from trim t
+join model m on t.model_id = m.id
+join make mk on m.make_id = mk.id
+group by mk.id, m.id
+;
+
+#Count of Trim by Make
+select 
+  mk.name as make,
+  count(distinct(t.id)) as trim_count
+from trim t
+join model m on t.model_id = m.id
+join make mk on m.make_id = mk.id
+group by mk.id
+;
 
 
- 67.177.50.13
+
