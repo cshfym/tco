@@ -21,6 +21,9 @@ class JmsConfiguration {
     @Value('${trim.fetch.persist.queue.concurrency}')
     String TRIM_FETCH_AND_PERSIST_CONCURRENCY
 
+    @Value('${pricedata.fetch.persist.queue.concurrency')
+    String PRICE_DATA_FETCH_AND_PERSIST_CONCURRENCY
+
     /*
     @Value('${simulation.consumer.queue.concurrency}')
     String SIMULATION_CONSUMER_QUEUE_CONCURRENCY
@@ -64,6 +67,16 @@ class JmsConfiguration {
         configurer.configure(factory, connectionFactory)
         factory
     }
+
+    @Bean
+    JmsListenerContainerFactory<?> priceDataFetchAndPersistFactory(ConnectionFactory connectionFactory, DefaultJmsListenerContainerFactoryConfigurer configurer) {
+
+        def factory = new DefaultJmsListenerContainerFactory()
+        factory.setConcurrency(PRICE_DATA_FETCH_AND_PERSIST_CONCURRENCY)
+        configurer.configure(factory, connectionFactory)
+        factory
+    }
+
 
     @Bean // Serialize message content to json using TextMessage
     static MessageConverter jacksonJmsMessageConverter() {

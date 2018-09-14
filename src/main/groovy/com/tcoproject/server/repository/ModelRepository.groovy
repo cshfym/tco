@@ -7,4 +7,7 @@ import org.springframework.data.repository.CrudRepository
 interface ModelRepository extends CrudRepository<PersistableModel, String> {
 
     PersistableModel findByMakeAndNameAndYear(PersistableMake make, String name, int year)
+
+    List<PersistableModel> findAllByMakeAndYear(PersistableMake make, int year)
+
 }

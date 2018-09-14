@@ -44,7 +44,7 @@ class TrimService extends CarQueryApiService {
 
     void doTrimFetchAndPersist(TrimFetchAndPersistRequest request) {
 
-        if (request.endWithYear < 1950) { request.endWithYear = 1950 }
+        if (request.endWithYear < 1960) { request.endWithYear = 1960 }
 
         PersistableMake make = makeService.getMakeByName(request.make)
 

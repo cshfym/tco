@@ -129,6 +129,10 @@ class ModelService extends CarQueryApiService {
         }
     }
 
+    List<PersistableModel> findAllByMakeAndYear(PersistableMake make, int year) {
+        modelRepository.findAllByMakeAndYear(make, year)
+    }
+
     PersistableModel findByMakeAndNameAndYear(PersistableMake make, String name, int year) {
         modelRepository.findByMakeAndNameAndYear(make, name, year)
     }
