@@ -48,6 +48,12 @@ class TrimService extends CarQueryApiService {
 
         PersistableMake make = makeService.getMakeByName(request.make)
 
+        if (!make) {
+            def message = "Could not find make with TrimFetchAndPersistRequest - [${request.make}]"
+            log.error message
+            throw new IllegalArgumentException(message)
+        }
+
         // Iterating through start and stop with year arguments
         (request.startWithYear..request.endWithYear).each { int year ->
             doFetchAndPersistForModelAndYear(make, year)
@@ -92,7 +98,6 @@ class TrimService extends CarQueryApiService {
             } catch (Exception ex) {
                 log.error "Exception thrown while persisting trim", ex
             }
-
         }
 
         log.info "Fetched and persisted [${trims.size()}] trims for [${make.name}], year [${year}] in [${System.currentTimeMillis() - startStopwatch}] ms"

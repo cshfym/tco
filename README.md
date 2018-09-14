@@ -23,12 +23,14 @@ group by mk.id, m.id
 
 #Count of Trim by Make
 select 
-  mk.name as make,
-  count(distinct(t.id)) as trim_count
-from trim t
-join model m on t.model_id = m.id
-join make mk on m.make_id = mk.id
-group by mk.id
+  distinct(mk.name), 
+  count(t.id) as trim_count
+  from make mk
+join model m on m.make_id = mk.id
+left join trim t on t.model_id = m.id
+where mk.is_common = 1
+group by mk.name
+order by trim_count desc, mk.name
 ;
 
 
