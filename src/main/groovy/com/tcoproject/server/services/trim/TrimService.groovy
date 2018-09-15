@@ -8,7 +8,7 @@ import com.tcoproject.server.models.domain.PersistableTrim
 import com.tcoproject.server.models.external.CarQueryTrimResponse
 import com.tcoproject.server.models.external.TrimFetchAndPersistRequest
 import com.tcoproject.server.repository.TrimRepository
-import com.tcoproject.server.services.common.CarQueryApiService
+import com.tcoproject.server.services.common.AbstractExternalApiService
 import com.tcoproject.server.services.make.MakeService
 import com.tcoproject.server.services.model.ModelService
 import groovy.util.logging.Slf4j
@@ -22,7 +22,7 @@ import java.lang.reflect.Type
 
 @Slf4j
 @Service
-class TrimService extends CarQueryApiService {
+class TrimService extends AbstractExternalApiService {
 
     @Autowired
     TrimRepository trimRepository

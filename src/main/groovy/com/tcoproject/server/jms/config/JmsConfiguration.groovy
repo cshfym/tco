@@ -21,7 +21,7 @@ class JmsConfiguration {
     @Value('${trim.fetch.persist.queue.concurrency}')
     String TRIM_FETCH_AND_PERSIST_CONCURRENCY
 
-    @Value('${pricedata.fetch.persist.queue.concurrency')
+    @Value('${pricedata.fetch.persist.queue.concurrency}')
     String PRICE_DATA_FETCH_AND_PERSIST_CONCURRENCY
 
     /*

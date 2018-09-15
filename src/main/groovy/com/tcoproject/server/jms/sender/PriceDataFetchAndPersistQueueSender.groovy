@@ -14,7 +14,7 @@ class PriceDataFetchAndPersistQueueSender {
     @Autowired
     ApplicationContext applicationContext
 
-    /* Queue for loading model requests */
+    /* Queue for loading requests */
     final static String QUEUE_PRICE_DATA_FETCH_PERSIST = "com.tcoproject.queue.pricedata.fetch.persist"
 
     /**

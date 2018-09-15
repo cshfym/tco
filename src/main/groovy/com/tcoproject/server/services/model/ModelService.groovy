@@ -7,7 +7,7 @@ import com.tcoproject.server.models.domain.PersistableModel
 import com.tcoproject.server.models.external.CarQueryModelResponse
 import com.tcoproject.server.models.external.ModelFetchAndPersistRequest
 import com.tcoproject.server.repository.ModelRepository
-import com.tcoproject.server.services.common.CarQueryApiService
+import com.tcoproject.server.services.common.AbstractExternalApiService
 import com.tcoproject.server.services.make.MakeService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,7 +20,7 @@ import java.lang.reflect.Type
 
 @Slf4j
 @Service
-class ModelService extends CarQueryApiService {
+class ModelService extends AbstractExternalApiService {
 
     @Autowired
     MakeService makeService
@@ -28,10 +28,14 @@ class ModelService extends CarQueryApiService {
     @Autowired
     ModelRepository modelRepository
 
+    @Value('${carqueryapi.v3.base.url}')
+    String CARQUERYAPI_V3_BASE_URL
+
     @Value('${carqueryapi.models.path}')
     String CARQUERYAPI_MODELS_PATH
 
     final String X_FORWARDED_FOR_HEADER = "X-Forwarded-For"
+
 
     void doModelFetchAndPersist(ModelFetchAndPersistRequest request) {
 
