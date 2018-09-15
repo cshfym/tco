@@ -8,11 +8,12 @@ class PriceDataFetchAndPersistRequest {
     Integer startWithYear
     Integer endWithYear
     String make
+    String model
     String source // KBB, etc.
     Boolean baseModelOnly
 
     @Override
     String toString() {
-        "PriceDataFetchAndPersistRequest: startWithYear [${startWithYear}], endWithYear [${endWithYear}], make [${make}], source [${source}], baseModelOnly [${baseModelOnly}]"
+        "PriceDataFetchAndPersistRequest: startWithYear [${startWithYear}], endWithYear [${endWithYear}], make [${make}], model [${model}], source [${source}], baseModelOnly [${baseModelOnly}]"
     }
 }

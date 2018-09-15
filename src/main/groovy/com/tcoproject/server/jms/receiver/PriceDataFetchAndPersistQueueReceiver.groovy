@@ -18,7 +18,7 @@ class PriceDataFetchAndPersistQueueReceiver {
     @JmsListener(destination = PriceDataFetchAndPersistQueueSender.QUEUE_PRICE_DATA_FETCH_PERSIST, containerFactory = "priceDataFetchAndPersistFactory")
     void receiveRequest(PriceDataFetchAndPersistRequest request) {
 
-        log.info "[*] <========== Received [${request}] from queue ${PriceDataFetchAndPersistQueueSender.QUEUE_PRICE_DATA_FETCH_PERSIST}"
+        log.info "[] ==========> * Received [${request}] from queue ${PriceDataFetchAndPersistQueueSender.QUEUE_PRICE_DATA_FETCH_PERSIST}"
 
         priceDataService.doPriceDataFetchAndPersist(request)
     }

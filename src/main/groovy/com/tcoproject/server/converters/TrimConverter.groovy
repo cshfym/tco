@@ -7,7 +7,7 @@ import groovy.util.logging.Slf4j
 
 @Slf4j
 @Singleton
-class TrimConverter {
+class TrimConverter extends BaseConverter {
 
     static PersistableTrim toPersistable(CarQueryTrimResponse trimResponse, PersistableModel persistableModel) {
         PersistableTrim persistableTrim = new PersistableTrim()
@@ -51,32 +51,4 @@ class TrimConverter {
         persistableTrim
     }
 
-    static Integer safeParseInteger(String value, String field) {
-        if (!value) { return 0 }
-        try {
-            return Integer.parseInt(value)
-        } catch (Exception ex) {
-            log.warn "Could not parse integer value [${value}] for field [${field}]"
-            return 0
-        }
-    }
-
-    static Double safeParseDouble(String value, String field) {
-        if (!value) { return 0.0 }
-        try {
-            return Double.parseDouble(value)
-        } catch (Exception ex) {
-            log.warn "Could not parse double value [${value}] for field [${field}]"
-            return 0.0
-        }
-    }
-
-    static Boolean safeParseBoolean(String value, String field) {
-        if (!value) { return Boolean.FALSE }
-        try {
-            return Boolean.valueOf(value)
-        } catch (Exception ex) {
-            return Boolean.FALSE
-        }
-    }
 }

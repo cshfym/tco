@@ -4,7 +4,7 @@ import com.tcoproject.server.models.external.ExternalMake
 import com.tcoproject.server.models.domain.PersistableMake
 
 @Singleton
-class MakeConverter {
+class MakeConverter extends BaseConverter {
 
     static PersistableMake toPersistable(ExternalMake make) {
         PersistableMake persistableMake = new PersistableMake()

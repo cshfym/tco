@@ -5,7 +5,7 @@ import com.tcoproject.server.models.domain.PersistableModel
 import com.tcoproject.server.models.external.CarQueryModelResponse
 
 @Singleton
-class ModelConverter {
+class ModelConverter extends BaseConverter {
 
     static PersistableModel toPersistable(CarQueryModelResponse model, PersistableMake persistableMake, int inputYear) {
         PersistableModel persistableModel = new PersistableModel()

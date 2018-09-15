@@ -1,7 +1,6 @@
 package com.tcoproject.server.models.domain
 
 import org.hibernate.annotations.GenericGenerator
-import org.joda.time.DateTime
 
 import javax.persistence.*
 
@@ -14,10 +13,14 @@ class PersistablePriceData {
     String id
 
     @ManyToOne
+    PersistableModel model
+
+    @ManyToOne
     @JoinColumn(name="trim_id")
     PersistableTrim trim
 
-    DateTime dateCreated
+    @Temporal(TemporalType.DATE)
+    Date dateCreated
 
     Boolean isBaseModelPrice
 
@@ -27,4 +30,9 @@ class PersistablePriceData {
 
     Double suggestedPrice
 
+    @Override
+    String toString() {
+      "PersistablePriceData: id [${id}], trim [${trim?.name}], dateCreated [${dateCreated}], isBaseModelPrice [${isBaseModelPrice}], " +
+              "retailPrice [${retailPrice}], suggestedPrice [${suggestedPrice}], source [${source}]"
+    }
 }

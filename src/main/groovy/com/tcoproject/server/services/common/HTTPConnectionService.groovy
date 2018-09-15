@@ -32,7 +32,7 @@ class HTTPConnectionService {
                 conn.setRequestProperty(k, v)
             }
 
-            log.info "Issuing requst to [${address}] as [${method.name()}] with request headers: [${requestHeaders}]"
+            log.debug "Issuing requst to [${address}] as [${method.name()}] with request headers: [${requestHeaders}]"
 
             if (base64EncodedAuthorization) {
                 conn.setRequestProperty("Authorization", "Basic " + base64EncodedAuthorization)
@@ -53,18 +53,18 @@ class HTTPConnectionService {
                     response = sb.toString()
                     break
                 case 401:
-                    throw new RuntimeException("Getting 401 response from address [${url.text}] with request headers [${requestHeaders}]")
+                    throw new RuntimeException("Getting 401 response from address [${address}] with request headers [${requestHeaders}]")
                     break
                 case 403:
-                    throw new RuntimeException("Getting 401 response from address [${url.text}] with request headers [${requestHeaders}]")
+                    throw new RuntimeException("Getting 401 response from address [${address}] with request headers [${requestHeaders}]")
                     return EMPTY_STRING
                     break
                 case 404:
-                    log.warn("404 Not Found at address [${url.text}] with request headers [${requestHeaders}]")
+                    log.warn("404 Not Found at address [${address}] with request headers [${requestHeaders}]")
                     return EMPTY_STRING
                     break
                 case 429:
-                    log.warn("429 Access Denied - too many requests at [${url.text}] with request headers [${requestHeaders}]")
+                    log.warn("429 Access Denied - too many requests at [${address}] with request headers [${requestHeaders}]")
                     return EMPTY_STRING
                     break
                 default:

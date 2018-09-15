@@ -33,5 +33,17 @@ group by mk.name
 order by trim_count desc, mk.name
 ;
 
+#Price Data
+select 
+  m.year,
+  mk.name as make, 
+  m.name as model, 
+  pd.source, pd.retail_price, pd.suggested_price, pd.is_base_model_price
+from price_data pd
+join model m on pd.model_id = m.id
+join make mk on m.make_id = mk.id
+order by m.year desc, m.name, m.name
+;
+
 
 
