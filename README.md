@@ -34,10 +34,10 @@ order by trim_count desc, mk.name
 ;
 
 #Price Data
-select 
+select
   m.year,
-  mk.name as make, 
-  m.name as model, 
+  mk.name as make,
+  m.name as model,
   pd.source, pd.retail_price, pd.suggested_price, pd.is_base_model_price
 from price_data pd
 join model m on pd.model_id = m.id
@@ -45,5 +45,22 @@ join make mk on m.make_id = mk.id
 order by m.year desc, m.name, m.name
 ;
 
+# Missing Price Data by Make > 1999
+select
+  mk.name as make,
+  m.name as model, m.year,
+  t.name as trim, t.body,
+  pd.retail_price, pd.suggested_price, pd.date_created as price_date
+from trim t
+join model m on t.model_id = m.id
+join make mk on m.make_id = mk.id
+left join price_data pd on pd.model_id = m.id
+where mk.name = 'Nissan'
+and m.year > 1999
+and retail_price is null
+and suggested_price is null
+order by m.year desc, mk.name, m.name, t.name
+limit 10000
+;
 
 
