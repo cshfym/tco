@@ -22,17 +22,17 @@ class PersistablePriceData {
     @Temporal(TemporalType.DATE)
     Date dateCreated
 
-    Boolean isBaseModelPrice
-
     Double retailPrice
 
     String source
 
     Double suggestedPrice
 
+    String trimDisplayName
+
     @Override
     String toString() {
-      "PersistablePriceData: id [${id}], trim [${trim?.name}], dateCreated [${dateCreated}], isBaseModelPrice [${isBaseModelPrice}], " +
-              "retailPrice [${retailPrice}], suggestedPrice [${suggestedPrice}], source [${source}]"
+      "PersistablePriceData: id [${id}], trim [${trim?.name}], dateCreated [${dateCreated}], " +
+              "retailPrice [${retailPrice}], suggestedPrice [${suggestedPrice}], source [${source}], trimDisplayName [${trimDisplayName}]"
     }
 }

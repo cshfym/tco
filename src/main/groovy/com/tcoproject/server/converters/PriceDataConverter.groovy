@@ -20,10 +20,10 @@ class PriceDataConverter extends BaseConverter {
             model = persistableModel
             trim = persistableTrim
             dateCreated = new Date()
-            isBaseModelPrice = persistableTrim ? true : false
             retailPrice = safeParseDouble(priceData[1], "response.info.vehicle.taggingprice[1]")
             source = "KBB"
             suggestedPrice = safeParseDouble(priceData[0], "response.info.vehicle.taggingprice[0]")
+            trimDisplayName = response.info.vehicle?.trimdisplayname
         }
         persistablePriceData
     }

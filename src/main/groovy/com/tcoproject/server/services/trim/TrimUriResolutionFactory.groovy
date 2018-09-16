@@ -1,5 +1,6 @@
 package com.tcoproject.server.services.trim
 
+import com.tcoproject.server.models.constants.TCOConstants
 import org.springframework.stereotype.Component
 
 /**
@@ -8,8 +9,27 @@ import org.springframework.stereotype.Component
 @Component
 class TrimUriResolutionFactory {
 
-    String targetUriSegment(String modelName, String trimName) {
-        ""
+
+    static String targetUriSegment(String makeName, String modelName, String trimName) {
+
+        if (makeName.equals("Nissan")) {
+            if (modelName.equals("Frontier")) {
+                if (trimName.startsWith("Desert Runner")) { return "desert-runner" }
+                if (trimName.startsWith("PRO-4X")) { return "pro-4x" }
+                if (trimName.startsWith("S ")) { return "s" }
+                if (trimName.startsWith("SL ")) { return "sl" }
+                if (trimName.startsWith("SV ")) { return "sv" }
+            }
+            if (modelName.equals("Juke")) {
+                if (trimName.startsWith("NISMO")) { return "nismo" }
+                if (trimName.startsWith("S ")) { return "s" }
+                if (trimName.startsWith("SL ")) { return "sl" }
+                if (trimName.startsWith("SV ")) { return "sv" }
+            }
+
+        }
+
+        TCOConstants.BASE_STYLE_OPTION
     }
 
 
