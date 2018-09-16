@@ -8,4 +8,5 @@ interface TrimRepository extends CrudRepository<PersistableTrim, String> {
 
     PersistableTrim findByModelAndName(PersistableModel model, String name)
 
+    List<PersistableTrim> findAllByModel(PersistableModel model)
 }

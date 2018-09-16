@@ -10,8 +10,8 @@ import com.tcoproject.server.models.external.kbb.KBBVehicleWrapper
 @Singleton
 class PriceDataConverter extends BaseConverter {
 
-    static PersistablePriceData toPersistableFromKBBMakeModelYear(KBBMakeModelYearResponse response, boolean isBaseModel,
-        PersistableModel persistableModel, PersistableTrim persistableTrim = null) {
+    static PersistablePriceData toPersistableFromKBBMakeModelYear(KBBMakeModelYearResponse response,
+        PersistableModel persistableModel, PersistableTrim persistableTrim) {
 
         List<String> priceData = parsePriceData(response.info.vehicle)
 
@@ -20,7 +20,7 @@ class PriceDataConverter extends BaseConverter {
             model = persistableModel
             trim = persistableTrim
             dateCreated = new Date()
-            isBaseModelPrice = isBaseModel
+            isBaseModelPrice = persistableTrim ? true : false
             retailPrice = safeParseDouble(priceData[1], "response.info.vehicle.taggingprice[1]")
             source = "KBB"
             suggestedPrice = safeParseDouble(priceData[0], "response.info.vehicle.taggingprice[0]")

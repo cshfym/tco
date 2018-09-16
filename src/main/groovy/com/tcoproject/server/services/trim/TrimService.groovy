@@ -33,6 +33,9 @@ class TrimService extends AbstractExternalApiService {
     @Autowired
     ModelService modelService
 
+    @Value('${carqueryapi.v3.base.url}')
+    String CARQUERYAPI_V3_BASE_URL
+
     @Value('${carqueryapi.trims.path}')
     String CARQUERYAPI_TRIMS_PATH
 
@@ -131,4 +134,7 @@ class TrimService extends AbstractExternalApiService {
 
     }
 
+    List<PersistableTrim> findAllTrimsForModel(PersistableModel model) {
+        trimRepository.findAllByModel(model)
+    }
 }
