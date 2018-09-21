@@ -20,8 +20,27 @@ class TrimUriResolutionFactory {
                 if (trimName.startsWith("SL ")) { return "sl" }
                 if (trimName.startsWith("SV ")) { return "sv" }
             }
+            if (modelName.equals("Titan")) {
+                if (trimName.startsWith("PRO-4X")) { return "pro-4x" }
+                if (trimName.startsWith("S ")) { return "s" }
+                if (trimName.startsWith("SL ")) { return "sl" }
+                if (trimName.startsWith("SV ")) { return "sv" }
+            }
+            if (modelName.equals("Xterra")) {
+                if (trimName.startsWith("Desert Runner")) { return "desert-runner" }
+                if (trimName.startsWith("PRO-4X")) { return "pro-4x" }
+                if (trimName.startsWith("X ")) { return "s" }
+                if (trimName.startsWith("SL ")) { return "sl" }
+                if (trimName.startsWith("SV ")) { return "sv" }
+            }
             if (modelName.equals("Juke")) {
                 if (trimName.startsWith("NISMO")) { return "nismo" }
+                if (trimName.startsWith("S ")) { return "s" }
+                if (trimName.startsWith("SL ")) { return "sl" }
+                if (trimName.startsWith("SV ")) { return "sv" }
+            }
+            if (modelName.equals("Armada")) {
+                if (trimName.startsWith("Platinum")) { return "platinum" }
                 if (trimName.startsWith("S ")) { return "s" }
                 if (trimName.startsWith("SL ")) { return "sl" }
                 if (trimName.startsWith("SV ")) { return "sv" }

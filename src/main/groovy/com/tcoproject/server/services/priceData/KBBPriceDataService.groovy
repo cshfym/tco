@@ -222,7 +222,12 @@ class KBBPriceDataService extends AbstractExternalApiService {
 
         String decodedJsonString = URLDecoder.decode(trimmed.substring(0, endIdx), "UTF-8")
 
-        kbbGson.fromJson(decodedJsonString, KBBMakeModelYearResponse)
+        try {
+            kbbGson.fromJson(decodedJsonString, KBBMakeModelYearResponse)
+        } catch (Exception ex) {
+            log.error "Exception during JSON parse at [${requestUri}]", ex
+        }
+
     }
 
     /**

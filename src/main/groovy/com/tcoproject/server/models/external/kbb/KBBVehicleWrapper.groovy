@@ -13,6 +13,6 @@ class KBBVehicleWrapper {
     String mpghwy
     String mpgrangelow
     String mpgrangehigh
-    Integer chromeid
+    String chromeid
 
 }

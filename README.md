@@ -38,10 +38,12 @@ select
   m.year,
   mk.name as make,
   m.name as model,
-  pd.source, pd.retail_price, pd.suggested_price, pd.is_base_model_price
+  t.name,
+  pd.trim_display_name, pd.source, pd.retail_price, pd.suggested_price  
 from price_data pd
 join model m on pd.model_id = m.id
 join make mk on m.make_id = mk.id
+left join trim t on t.id = pd.trim_id
 order by m.year desc, m.name, m.name
 ;
 
@@ -63,4 +65,17 @@ order by m.year desc, mk.name, m.name, t.name
 limit 10000
 ;
 
+# Count of price data by make, model
+select 
+  distinct(mk.name), 
+  count(t.id) as trim_count,
+  count(pd.id) as price_count
+  from make mk
+join model m on m.make_id = mk.id
+left join trim t on t.model_id = m.id
+left join price_data pd on pd.model_id = m.id
+where mk.is_common = 1
+group by mk.name
+order by price_count desc, trim_count desc
+;
 

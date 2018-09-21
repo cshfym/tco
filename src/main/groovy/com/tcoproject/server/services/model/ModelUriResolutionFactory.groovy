@@ -15,6 +15,10 @@ class ModelUriResolutionFactory {
             if (trimName?.contains("Crew Cab")) { return "frontier-crew-cab" }
             if (trimName?.contains("King Cab")) { return "frontier-king-cab" }
         }
+        if (modelName.equals("Titan")) {
+            if (trimName?.contains("Crew Cab")) { return "titan-crew-cab" }
+            if (trimName?.contains("King Cab")) { return "titan-king-cab" }
+        }
 
         modelName.toLowerCase()
     }

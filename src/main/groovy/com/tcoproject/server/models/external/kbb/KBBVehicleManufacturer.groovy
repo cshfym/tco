@@ -2,7 +2,7 @@ package com.tcoproject.server.models.external.kbb
 
 class KBBVehicleManufacturer {
 
-    Integer id
+    String id
     String atcname
     String name
     String shortname
