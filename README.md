@@ -79,3 +79,17 @@ group by mk.name
 order by price_count desc, trim_count desc
 ;
 
+# All price data
+select
+ mk.name as make,
+ m.name as model, m.year,
+ t.name as trim,
+ pd.retail_price, pd.suggested_price
+from price_data pd
+join model m on pd.model_id = m.id
+left join trim t on pd.trim_id = t.id
+join make mk on m.make_id = mk.id
+where (pd.retail_price > 0 or pd.suggested_price > 0)
+order by mk.name, m.year desc, m.name, t.name
+limit 100000;
+
