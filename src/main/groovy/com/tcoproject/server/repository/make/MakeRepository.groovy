@@ -1,4 +1,4 @@
-package com.tcoproject.server.repository
+package com.tcoproject.server.repository.make
 
 import com.tcoproject.server.models.domain.PersistableMake
 import org.springframework.data.repository.CrudRepository

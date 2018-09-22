@@ -1,6 +1,6 @@
 package com.tcoproject.server.services.scheduled
 
-import com.tcoproject.server.services.model.ModelService
+import com.tcoproject.server.services.model.CarQueryModelService
 import groovy.util.logging.Slf4j
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 class MasterScheduleService {
 
     @Autowired
-    ModelService modelService
+    CarQueryModelService modelService
 
     @Scheduled(fixedDelay = 43200000L, initialDelay = 43200000L) // Every 12 hours.
     void scheduledModelFetchCron() {

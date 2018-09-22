@@ -4,34 +4,32 @@ import com.google.gson.reflect.TypeToken
 import com.tcoproject.server.converters.TrimConverter
 import com.tcoproject.server.models.domain.PersistableMake
 import com.tcoproject.server.models.domain.PersistableModel
-import com.tcoproject.server.models.domain.PersistableTrim
 import com.tcoproject.server.models.external.CarQueryTrimResponse
 import com.tcoproject.server.models.external.TrimFetchAndPersistRequest
-import com.tcoproject.server.repository.TrimRepository
+import com.tcoproject.server.repository.model.ModelRepositoryService
+import com.tcoproject.server.repository.trim.TrimRepositoryService
 import com.tcoproject.server.services.common.AbstractExternalApiService
-import com.tcoproject.server.services.make.MakeService
-import com.tcoproject.server.services.model.ModelService
+import com.tcoproject.server.repository.make.MakeRepositoryService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RequestMethod
 
 import java.lang.reflect.Type
 
 @Slf4j
 @Service
-class TrimService extends AbstractExternalApiService {
+class CarQueryTrimService extends AbstractExternalApiService {
 
     @Autowired
-    TrimRepository trimRepository
+    MakeRepositoryService makeService
 
     @Autowired
-    MakeService makeService
+    ModelRepositoryService modelRepositoryService
 
     @Autowired
-    ModelService modelService
+    TrimRepositoryService trimRepositoryService
 
     @Value('${carqueryapi.v3.base.url}')
     String CARQUERYAPI_V3_BASE_URL
@@ -91,13 +89,13 @@ class TrimService extends AbstractExternalApiService {
 
         // Save all
         trims.each { CarQueryTrimResponse trimResponse ->
-            PersistableModel model = modelService.findByMakeAndNameAndYear(make, trimResponse.modelName, year)
+            PersistableModel model = modelRepositoryService.findByMakeAndNameAndYear(make, trimResponse.modelName, year)
             if (!model) {
                 log.error "Could not find model by make [${make.name}], trimResponse.modelName [${trimResponse.modelName}], and year [${year}]!"
                 return // Next response
             }
             try {
-                persistTrim(TrimConverter.toPersistable(trimResponse, model))
+                trimRepositoryService.persistTrim(TrimConverter.toPersistable(trimResponse, model))
             } catch (Exception ex) {
                 log.error "Exception thrown while persisting trim", ex
             }
@@ -120,21 +118,4 @@ class TrimService extends AbstractExternalApiService {
         }
     }
 
-    @Transactional
-    void persistTrim(PersistableTrim persistableTrim) {
-
-        PersistableTrim existingTrim = trimRepository.findByModelAndName(persistableTrim.model, persistableTrim.name)
-
-        if (!existingTrim) {
-            log.info "Persisting trim for model [${persistableTrim.model.name}], year [${persistableTrim.model.year}] and trim [${persistableTrim.name}]"
-            trimRepository.save(persistableTrim)
-        } else {
-            log.info "Bypassing persistence for trim - model [${persistableTrim.model.name}], year [${persistableTrim.model.year}] and trim [${persistableTrim.name}] - already exists!"
-        }
-
-    }
-
-    List<PersistableTrim> findAllTrimsForModel(PersistableModel model) {
-        trimRepository.findAllByModel(model)
-    }
 }

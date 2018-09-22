@@ -1,4 +1,4 @@
-package com.tcoproject.server.repository
+package com.tcoproject.server.repository.trim
 
 import com.tcoproject.server.models.domain.PersistableModel
 import com.tcoproject.server.models.domain.PersistableTrim

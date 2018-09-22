@@ -1,4 +1,4 @@
-package com.tcoproject.server.repository
+package com.tcoproject.server.repository.model
 
 import com.tcoproject.server.models.domain.PersistableMake
 import com.tcoproject.server.models.domain.PersistableModel

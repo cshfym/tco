@@ -1,18 +1,15 @@
-package com.tcoproject.server.services.make
+package com.tcoproject.server.repository.make
 
 import com.tcoproject.server.converters.MakeConverter
 import com.tcoproject.server.models.domain.PersistableMake
 import com.tcoproject.server.models.external.ExternalMake
-
-import com.tcoproject.server.repository.MakeRepository
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Slf4j
 @Service
-class MakeService {
+class MakeRepositoryService {
 
     @Autowired
     MakeRepository makeRepository

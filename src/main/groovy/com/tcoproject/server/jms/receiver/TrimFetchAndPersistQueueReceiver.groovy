@@ -2,7 +2,7 @@ package com.tcoproject.server.jms.receiver
 
 import com.tcoproject.server.jms.sender.TrimFetchAndPersistQueueSender
 import com.tcoproject.server.models.external.TrimFetchAndPersistRequest
-import com.tcoproject.server.services.trim.TrimService
+import com.tcoproject.server.services.trim.CarQueryTrimService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jms.annotation.JmsListener
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 class TrimFetchAndPersistQueueReceiver {
 
     @Autowired
-    TrimService trimService
+    CarQueryTrimService trimService
 
     @JmsListener(destination = TrimFetchAndPersistQueueSender.QUEUE_TRIM_FETCH_PERSIST, containerFactory = "trimFetchAndPersistFactory")
     void receiveRequest(TrimFetchAndPersistRequest request) {

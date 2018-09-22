@@ -4,18 +4,16 @@ import com.tcoproject.server.converters.PriceDataConverter
 import com.tcoproject.server.models.constants.TCOConstants
 import com.tcoproject.server.models.domain.PersistableMake
 import com.tcoproject.server.models.domain.PersistableModel
-import com.tcoproject.server.models.domain.PersistablePriceData
-import com.tcoproject.server.models.domain.PersistablePriceDataOrphan
 import com.tcoproject.server.models.domain.PersistableTrim
 import com.tcoproject.server.models.external.PriceDataFetchAndPersistRequest
 import com.tcoproject.server.models.external.kbb.KBBMakeModelYearResponse
-import com.tcoproject.server.repository.PriceDataOrphanRepository
-import com.tcoproject.server.repository.PriceDataRepository
+import com.tcoproject.server.repository.priceData.PriceDataRepositoryService
+import com.tcoproject.server.repository.model.ModelRepositoryService
+import com.tcoproject.server.repository.priceDataOrphan.PriceDataOrphanRepositoryService
+import com.tcoproject.server.repository.trim.TrimRepositoryService
 import com.tcoproject.server.services.common.AbstractExternalApiService
-import com.tcoproject.server.services.make.MakeService
-import com.tcoproject.server.services.model.ModelService
+import com.tcoproject.server.repository.make.MakeRepositoryService
 import com.tcoproject.server.services.model.ModelUriResolutionFactory
-import com.tcoproject.server.services.trim.TrimService
 import com.tcoproject.server.services.trim.TrimUriResolutionFactory
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,26 +21,24 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.RequestMethod
 
-import javax.transaction.Transactional
-
 @Slf4j
 @Service
 class KBBPriceDataService extends AbstractExternalApiService {
 
     @Autowired
-    PriceDataRepository priceDataRepository
+    PriceDataRepositoryService priceDataRepositoryService
 
     @Autowired
-    PriceDataOrphanRepository priceDataOrphanRepository
+    PriceDataOrphanRepositoryService priceDataOrphanRepositoryService
 
     @Autowired
-    MakeService makeService
+    MakeRepositoryService makeService
 
     @Autowired
-    ModelService modelService
+    ModelRepositoryService modelRepositoryService
 
     @Autowired
-    TrimService trimService
+    TrimRepositoryService trimRepositoryService
 
     @Autowired
     TrimUriResolutionFactory trimUriResolutionFactory
@@ -83,7 +79,7 @@ class KBBPriceDataService extends AbstractExternalApiService {
 
         int updateCount = 0
 
-        List<PersistableModel> modelsForMakeAndYear = modelService.findAllByMakeAndYear(persistableMake, year)
+        List<PersistableModel> modelsForMakeAndYear = modelRepositoryService.findAllByMakeAndYear(persistableMake, year)
 
         // Filter models if specified in argument
         if (filterByModel) {
@@ -97,7 +93,7 @@ class KBBPriceDataService extends AbstractExternalApiService {
                 boolean persisted = doProcessWithModelAndTrimAndYear(persistableMake, persistableModel, null, year)
                 if (persisted) { updateCount++ }
             } else {
-                List<PersistableTrim> trimList = trimService.findAllTrimsForModel(persistableModel)
+                List<PersistableTrim> trimList = trimRepositoryService.findAllTrimsForModel(persistableModel)
                 trimList.each { PersistableTrim persistableTrim ->
                     boolean persisted = doProcessWithModelAndTrimAndYear(persistableMake, persistableModel, persistableTrim, year)
                     if (persisted) { updateCount++ }
@@ -112,7 +108,7 @@ class KBBPriceDataService extends AbstractExternalApiService {
 
         // Check for previous
         Date runDate = new Date().clearTime()
-        if (priceDataExists(persistableModel, persistableTrim, runDate)) {
+        if (priceDataRepositoryService.priceDataExists(persistableModel, persistableTrim, runDate, "KBB")) {
             log.info "Price data already exists for model [${persistableModel.name}], [${year}], trim [${persistableTrim}], " +
                 "and date [${runDate}], bypassing!"
             return
@@ -130,7 +126,7 @@ class KBBPriceDataService extends AbstractExternalApiService {
         }
 
         if (!kbbMakeModelYearResponse) {
-            persistPriceDataOrphan(persistableModel, requestUri)
+            priceDataOrphanRepositoryService.persistPriceDataOrphan(persistableModel, requestUri)
             return // Couldn't fetch and parse for non-exception reason (404, etc.), next model
         }
 
@@ -151,48 +147,9 @@ class KBBPriceDataService extends AbstractExternalApiService {
             return
         }
 
-        persistPriceData(kbbMakeModelYearResponse, persistableModel, persistableTrim)
-    }
-
-    @Transactional
-    boolean persistPriceData(KBBMakeModelYearResponse kbbMakeModelYearResponse, PersistableModel persistableModel, PersistableTrim persistableTrim) {
-
-        // Check for existing data (no time)
-        Date today = new Date().clearTime()
-        PersistablePriceData existingPriceData =
-                priceDataRepository.findByModelAndTrimAndSourceAndDateCreated(persistableModel, persistableTrim, "KBB", today)
-        if (existingPriceData) {
-            log.info "Existing price data found for model [${persistableModel?.name}], trim [${persistableTrim?.name}], on date [${today}]; bypassing persistence."
-            return false
-        }
-
-        try {
-            PersistablePriceData priceData = PriceDataConverter.toPersistableFromKBBMakeModelYear(kbbMakeModelYearResponse, persistableModel, persistableTrim)
-            def persisted = priceDataRepository.save(priceData)
-            log.info "Persisted price data [${persisted}]"
-        } catch (Exception ex) {
-            log.error "Exception thrown while converting and persisting persistablePriceData", ex
-            return false
-        }
-
-        true
-    }
-
-    @Transactional
-    void persistPriceDataOrphan(PersistableModel persistableModel, String orphanUri) {
-
-        if (priceDataOrphanRepository.findByModelAndUri(persistableModel, orphanUri)) {
-            log.info "Existing orphan record with model [${persistableModel.name}] and uri [${orphanUri}], not persisting."
-            return
-        }
-
-        PersistablePriceDataOrphan orphan = new PersistablePriceDataOrphan(model: persistableModel,uri: orphanUri)
-        log.info "Persisting orphan record with model [${persistableModel.name}] and uri [${orphanUri}]"
-        priceDataOrphanRepository.save(orphan)
-    }
-
-    boolean priceDataExists(PersistableModel model, PersistableTrim trim, Date date) {
-        priceDataRepository.findByModelAndTrimAndSourceAndDateCreated(model, trim, "KBB", date)
+        priceDataRepositoryService.persistPriceData(
+                PriceDataConverter.toPersistableFromKBBMakeModelYear(kbbMakeModelYearResponse, persistableModel, persistableTrim),
+                "KBB")
     }
 
     KBBMakeModelYearResponse fetchAndParsePriceData(String requestUri) {
@@ -263,7 +220,6 @@ class KBBPriceDataService extends AbstractExternalApiService {
     }
 
     private static String sanitizeModelName(String name) {
-
         // Replace space with dash
         name.trim().replace(" ","-")
     }

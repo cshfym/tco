@@ -2,7 +2,7 @@ package com.tcoproject.server.jms.receiver
 
 import com.tcoproject.server.jms.sender.ModelFetchAndPersistQueueSender
 import com.tcoproject.server.models.external.ModelFetchAndPersistRequest
-import com.tcoproject.server.services.model.ModelService
+import com.tcoproject.server.services.model.CarQueryModelService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jms.annotation.JmsListener
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 class ModelFetchAndPersistQueueReceiver {
 
     @Autowired
-    ModelService modelService
+    CarQueryModelService modelService
 
     @JmsListener(destination = ModelFetchAndPersistQueueSender.QUEUE_MODEL_FETCH_PERSIST, containerFactory = "modelFetchAndPersistFactory")
     void receiveRequest(ModelFetchAndPersistRequest request) {
