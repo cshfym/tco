@@ -1,6 +1,8 @@
 package com.tcoproject.server.services.priceData
 
 import com.tcoproject.server.converters.PriceDataConverter
+import com.tcoproject.server.models.constants.ResolutionKeySourceEnum
+import com.tcoproject.server.models.constants.ResolutionTargetTypeEnum
 import com.tcoproject.server.models.constants.TCOConstants
 import com.tcoproject.server.models.domain.PersistableMake
 import com.tcoproject.server.models.domain.PersistableModel
@@ -13,8 +15,8 @@ import com.tcoproject.server.repository.priceDataOrphan.PriceDataOrphanRepositor
 import com.tcoproject.server.repository.trim.TrimRepositoryService
 import com.tcoproject.server.services.common.AbstractExternalApiService
 import com.tcoproject.server.repository.make.MakeRepositoryService
-import com.tcoproject.server.services.model.ModelUriResolutionFactory
-import com.tcoproject.server.services.trim.TrimUriResolutionFactory
+import com.tcoproject.server.services.common.UriResolutionFactory
+
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -41,10 +43,7 @@ class KBBPriceDataService extends AbstractExternalApiService {
     TrimRepositoryService trimRepositoryService
 
     @Autowired
-    TrimUriResolutionFactory trimUriResolutionFactory
-
-    @Autowired
-    ModelUriResolutionFactory modelUriResolutionFactory
+    UriResolutionFactory uriResolutionFactory
 
     @Value('${kbb.base.url}')
     String kbbBaseUrl
@@ -116,7 +115,7 @@ class KBBPriceDataService extends AbstractExternalApiService {
 
         KBBMakeModelYearResponse kbbMakeModelYearResponse
 
-        String requestUri = buildRequestUriForModelAndTrim(persistableMake.name, sanitizeModelName(persistableModel.name), year, persistableTrim?.name)
+        String requestUri = buildRequestUriForMakeAndModelAndTrim(persistableMake, persistableModel, persistableTrim, year)
 
         try {
             kbbMakeModelYearResponse = fetchAndParsePriceData(requestUri)
@@ -148,8 +147,14 @@ class KBBPriceDataService extends AbstractExternalApiService {
         }
 
         priceDataRepositoryService.persistPriceData(
-                PriceDataConverter.toPersistableFromKBBMakeModelYear(kbbMakeModelYearResponse, persistableModel, persistableTrim),
-                "KBB")
+                PriceDataConverter.toPersistableFromKBBMakeModelYear(
+                    kbbMakeModelYearResponse,
+                    persistableModel,
+                    persistableTrim,
+                    "KBB",
+                    requestUri
+                )
+        )
     }
 
     KBBMakeModelYearResponse fetchAndParsePriceData(String requestUri) {
@@ -196,14 +201,16 @@ class KBBPriceDataService extends AbstractExternalApiService {
      * @return URI
      * Format: https://www.kbb.com/<make_name>/<model_name>/<year>/style?options
      */
-    String buildRequestUriForModelAndTrim(String makeName, String modelName, int year, String trimName) {
+    String buildRequestUriForMakeAndModelAndTrim(PersistableMake make, PersistableModel model, PersistableTrim trim, int year) {
 
-        String derivedModelName = determineModelArgument(makeName, modelName, trimName)
-        String derivedTrimName = determineTrimArgument(makeName, modelName, trimName)
+        String sanitizedModelName = sanitizeModelName(model.name)
+
+        String derivedModelName = determineModelArgument(make, model, trim)
+        String derivedTrimName = determineTrimArgument(make, model, trim)
 
         new StringBuffer()
                 .append(kbbBaseUrl)
-                .append(makeName.toLowerCase()).append("/")
+                .append(make.name.toLowerCase()).append("/")
                 .append(derivedModelName.toLowerCase()).append("/")
                 .append(year).append("/")
                 .append(derivedTrimName)
@@ -211,12 +218,12 @@ class KBBPriceDataService extends AbstractExternalApiService {
                 .toString()
     }
 
-    private String determineTrimArgument(String makeName, String modelName, String trimName) {
-        trimUriResolutionFactory.targetUriSegment(makeName, modelName, trimName)
+    private String determineTrimArgument(PersistableMake make, PersistableModel model, PersistableTrim trim) {
+        uriResolutionFactory.targetUriSegment(make, model, trim, ResolutionTargetTypeEnum.TARGET_TYPE_TRIM, ResolutionKeySourceEnum.KEY_SOURCE_TRIM)
     }
 
-    private String determineModelArgument(String makeName, String modelName, String trimName) {
-        modelUriResolutionFactory.targetUriSegment(makeName, modelName, trimName)
+    private String determineModelArgument(PersistableMake make, PersistableModel model, PersistableTrim trim) {
+        uriResolutionFactory.targetUriSegment(make, model, trim, ResolutionTargetTypeEnum.TARGET_TYPE_MODEL, ResolutionKeySourceEnum.KEY_SOURCE_TRIM)
     }
 
     private static String sanitizeModelName(String name) {

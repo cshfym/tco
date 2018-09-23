@@ -3,6 +3,7 @@ package com.tcoproject.server.repository.priceDataOrphan
 import com.tcoproject.server.models.domain.PersistableModel
 import com.tcoproject.server.models.domain.PersistablePriceDataOrphan
 import groovy.util.logging.Slf4j
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import javax.transaction.Transactional
@@ -11,6 +12,8 @@ import javax.transaction.Transactional
 @Service
 class PriceDataOrphanRepositoryService {
 
+    @Autowired
+    PriceDataOrphanRepository priceDataOrphanRepository
 
     @Transactional
     void persistPriceDataOrphan(PersistableModel persistableModel, String orphanUri) {

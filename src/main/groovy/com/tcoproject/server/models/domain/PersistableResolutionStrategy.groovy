@@ -5,6 +5,7 @@ import org.hibernate.annotations.GenericGenerator
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
+import javax.persistence.ManyToOne
 
 /**
  * Entity to store resolution strategies for non-standard model and trim names
@@ -20,17 +21,19 @@ class PersistableResolutionStrategy {
     // Source of price data - i.e. KBB
     String source
 
-    // Source make
-    String makeName
+    @ManyToOne
+    PersistableMake make
 
-    // Source model
     String modelName
 
     // The target type returned for value returned - Model or Trim
-    String targetType
+    String uriTargetType
 
     // Source field to look for the key - generally the Trim
     String keySource
+
+    // Inspection strategy
+    String inspectionType
 
     // Key to look for in the keySource
     String key

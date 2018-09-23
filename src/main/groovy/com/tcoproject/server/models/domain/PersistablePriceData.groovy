@@ -26,6 +26,8 @@ class PersistablePriceData {
 
     String source
 
+    String sourceUrl
+
     Double suggestedPrice
 
     String trimDisplayName

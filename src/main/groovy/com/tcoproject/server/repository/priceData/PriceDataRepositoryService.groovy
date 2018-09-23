@@ -17,12 +17,13 @@ class PriceDataRepositoryService {
     PriceDataRepository priceDataRepository
 
     @Transactional
-    boolean persistPriceData(PersistablePriceData persistablePriceData, String source) {
+    boolean persistPriceData(PersistablePriceData persistablePriceData) {
 
         // Check for existing data (no time)
         Date today = new Date().clearTime()
         PersistablePriceData existingPriceData =
-                priceDataRepository.findByModelAndTrimAndSourceAndDateCreated(persistablePriceData.model, persistablePriceData.trim, source, today)
+                priceDataRepository.findByModelAndTrimAndSourceAndDateCreated(persistablePriceData.model,
+                        persistablePriceData.trim, persistablePriceData.source, today)
         if (existingPriceData) {
             log.info "Existing price data found for model [${persistablePriceData?.model?.name}], " +
                     "trim [${persistablePriceData?.trim?.name}], on date [${today}]; bypassing persistence."

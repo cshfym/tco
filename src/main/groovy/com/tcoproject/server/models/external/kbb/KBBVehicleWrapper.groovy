@@ -8,7 +8,7 @@ class KBBVehicleWrapper {
     String name
     String trimdisplayname
     String price
-    Integer defaultprice   // MSRP i.e. 42715
+    String defaultprice   // MSRP i.e. 42715
     String mpgcity
     String mpghwy
     String mpgrangelow
