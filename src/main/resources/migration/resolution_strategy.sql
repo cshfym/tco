@@ -1,4 +1,6 @@
 
+-- Build resolution strategies.
+
 SET @NissanMakeId = (SELECT id from `make` where name = 'Nissan');
 
 start transaction;
