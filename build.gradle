@@ -21,16 +21,10 @@ plugins {
 }
 
 group = 'com.tcoproject'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.2'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-
-/* apply plugin: 'war'
-war {
-	baseName = 'tcoproject-server'
-	version =  "${version}"
-} */
 
 repositories {
 	mavenCentral()
@@ -46,13 +40,10 @@ bootRun {
 	sourceResources sourceSets.main
 }
 
-jar {
-	enabled = true
-}
-
 bootJar {
 	mainClassName = "com.tcoproject.server.Server"
 	classifier = 'boot'
+	archiveName = 'tcoproject-server.war'
 	launchScript()
 }
 

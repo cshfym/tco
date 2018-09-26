@@ -1,6 +1,7 @@
 package com.tcoproject.server.resources
 
 import com.tcoproject.server.models.BasicResponse
+import com.tcoproject.server.models.domain.PersistableMake
 import com.tcoproject.server.models.external.ExternalMake
 import com.tcoproject.server.repository.make.MakeRepositoryService
 import groovy.util.logging.Slf4j
@@ -28,4 +29,10 @@ class MakeResource {
         new BasicResponse(success: true)
     }
 
+    // TODO Convert this to expose a different model. Temporary.
+    @ResponseBody
+    @RequestMapping(method=RequestMethod.GET, produces="application/json")
+    List<PersistableMake> getMakes() {
+        makeService.getAllCommonMakes()
+    }
 }
